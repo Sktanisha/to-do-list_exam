@@ -48,13 +48,14 @@ const App = () => {
     setEditModel(!editModel)
   }
 
-  let handleUpdate = () =>{
-    update(ref(db, "todolist/ " + id),{
-      item: editTask
-    }).then(()=>{
-      setEditModel(false)
-    })
-  }
+  let handleUpdate = () => {
+  update(ref(db, "todolist/" + id), {
+    item: editTask,
+  }).then(() => {
+    setEditModel(false);
+  });
+};
+
 
   return (
     <div>
