@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { getDatabase, ref, set, push, onValue, remove, update} from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  push,
+  onValue,
+  remove,
+  update,
+} from "firebase/database";
 
 const App = () => {
   let [task, setTask] = useState("");
-  let [taskList, setTaskList] = useState([])
-  let [editModel, setEditModel] = useState(false)
-  let [editTask, setEditTask] = useState("")
-  let[id,setId]= useState("null")
-
+  let [taskList, setTaskList] = useState([]);
+  let [editModel, setEditModel] = useState(false);
+  let [editTask, setEditTask] = useState("");
+  let [id, setId] = useState("null");
 
   const db = getDatabase();
 
@@ -30,166 +37,174 @@ const App = () => {
   useEffect(() => {
     const starCountRef = ref(db, "todolist/");
     onValue(starCountRef, (snapshot) => {
-      let array = []
+      let array = [];
       const data = snapshot.val();
-      snapshot.forEach((item)=>{
-        array.push({...item.val(),id:item.key})
-      })
-      setTaskList(array)
+      snapshot.forEach((item) => {
+        array.push({ ...item.val(), id: item.key });
+      });
+      setTaskList(array);
     });
   }, []);
 
-  let handleTaskDelete= (id) =>{
-    remove(ref(db, "todolist/" + id))
-  }
+  let handleTaskDelete = (id) => {
+    remove(ref(db, "todolist/" + id));
+  };
 
-  let handleEditModel = (id)=>{
-    setId(id)
-    setEditModel(!editModel)
-  }
+  let handleEditModel = (id) => {
+    setId(id);
+    setEditModel(!editModel);
+  };
 
   let handleUpdate = () => {
-  update(ref(db, "todolist/" + id), {
-    item: editTask,
-  }).then(() => {
-    setEditModel(false);
-  });
-};
-
+    update(ref(db, "todolist/" + id), {
+      item: editTask,
+    }).then(() => {
+      setEditModel(false);
+    });
+  };
 
   return (
-    <div>
-      <>
-        <meta charSet="UTF-8" />
-        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link
-          href="https://unpkg.com/tailwindcss@2.2.4/dist/tailwind.min.css"
-          rel="stylesheet"
-        />
-        <div className="w-full h-screen bg-gray-100 pt-8">
-          <div className="bg-white p-3 max-w-md mx-auto">
-            <div className="text-center">
-              <h1 className="text-3xl font-bold">ToDo App</h1>
-              <div className="mt-4 flex">
-                <input
-                  onChange={handleChange}
-                  className="w-80 border-b-2 border-gray-500 text-black"
-                  type="text"
-                  placeholder="Enter your task here"
-                />
-                <button
-                  onClick={handleSubmit}
-                  className="ml-2 border-2 border-green-500 p-2 text-green-500 hover:text-white hover:bg-green-500 rounded-lg flex"
-                >
-                  <svg
-                    className="h-6 w-6"
-                    width={24}
-                    height={24}
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    {" "}
-                    <path stroke="none" d="M0 0h24v24H0z" />{" "}
-                    <circle cx={12} cy={12} r={9} />{" "}
-                    <line x1={9} y1={12} x2={15} y2={12} />{" "}
-                    <line x1={12} y1={9} x2={12} y2={15} />
-                  </svg>
-                  <span>Add</span>
-                </button>
-              </div>
-            </div>
+    
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-200 flex items-center justify-center p-4">
+    <div className="w-full max-w-xl">
+      {/* Header */}
+      <div className="text-center mb-6">
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
+          ToDo
+          <span className="text-slate-500">•</span>
+          Firebase
+        </h1>
+        <p className="text-slate-600 mt-2">
+          Add tasks, edit them, and keep your list synced.
+        </p>
+      </div>
 
-            <div className="mt-8">
-              {taskList.map((litem)=>(
-                  <div className="flex align-middle flex-row justify-between">
-                    <div className="p-2">
-                      <p className="text-lg text-black">{litem.item}</p>
-                    </div>
-                    <button onClick={()=> handleTaskDelete(litem.id)} className="flex text-red-500 border-2 border-red-500 p-2 rounded-lg">
-                      <svg
-                        className="h-6 w-6 text-red-500"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        {" "}
-                        <circle cx={12} cy={12} r={10} />{" "}
-                        <line x1={15} y1={9} x2={9} y2={15} />{" "}
-                        <line x1={9} y1={9} x2={15} y2={15} />
-                      </svg>
-                      <span>Remove</span>
+      {/* Main Card */}
+      <div className="bg-white/90 backdrop-blur rounded-2xl shadow-xl border border-white/60 overflow-hidden">
+        {/* Add bar */}
+        <div className="p-5 sm:p-6 border-b border-slate-100">
+          <div className="flex gap-2">
+            <input
+              value={task}
+              onChange={handleChange}
+              className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-slate-400"
+              type="text"
+              placeholder="What do you need to do?"
+              onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            />
+            <button
+              onClick={handleSubmit}
+              className="rounded-xl px-4 py-3 bg-slate-900 text-white font-semibold shadow hover:bg-slate-800 active:scale-[0.98] transition"
+              title="Add task"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+
+        {/* List */}
+        <div className="p-5 sm:p-6">
+          {taskList.length === 0 ? (
+            <div className="text-center py-10">
+              <div className="text-5xl">📝</div>
+              <p className="mt-3 text-slate-700 font-semibold">No tasks yet</p>
+              <p className="text-slate-500">Add one above to get started.</p>
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {taskList.map((litem) => (
+                <li
+                  key={litem.id}
+                  className="group flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm hover:shadow transition"
+                >
+                  <div className="min-w-0">
+                    <p className="text-slate-900 font-semibold truncate">
+                      {litem.item}
+                    </p>
+                    <p className="text-slate-500 text-sm">
+                      Saved to Firebase Realtime DB
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() => handleEditModel(litem.id, litem.item)}
+                      className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-slate-700 font-semibold hover:bg-slate-100 transition"
+                    >
+                      Edit
                     </button>
-                    <button onClick={()=> handleEditModel(litem.id)} className="flex text-red-500 border-2 border-red-500 p-2 rounded-lg">
-                      <svg
-                        className="h-6 w-6 text-red-500"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        {" "}
-                        <circle cx={12} cy={12} r={10} />{" "}
-                        <line x1={15} y1={9} x2={9} y2={15} />{" "}
-                        <line x1={9} y1={9} x2={15} y2={15} />
-                      </svg>
-                      <span>Edit</span>
+
+                    <button
+                      onClick={() => handleTaskDelete(litem.id)}
+                      className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-red-700 font-semibold hover:bg-red-100 transition"
+                    >
+                      Remove
                     </button>
                   </div>
+                </li>
               ))}
-                  
-                  <hr className="mt-2" />
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* Edit Modal */}
+      {editModel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* overlay */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setEditModel(false)}
+          />
+
+          {/* modal */}
+          <div className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-slate-200 p-5 sm:p-6">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-extrabold text-slate-900">
+                  Edit task
+                </h2>
+                <p className="text-slate-500 text-sm">
+                  Update the task and save changes.
+                </p>
+              </div>
+
+              <button
+                onClick={() => setEditModel(false)}
+                className="rounded-xl px-3 py-2 bg-slate-100 text-slate-700 font-bold hover:bg-slate-200 transition"
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-5 flex gap-2">
+              <input
+                value={editTask}
+                onChange={(e) => setEditTask(e.target.value)}
+                className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 placeholder-slate-400 outline-none focus:ring-2 focus:ring-slate-400"
+                type="text"
+                placeholder="Update your task"
+                onKeyDown={(e) => e.key === "Enter" && handleUpdate()}
+              />
+              <button
+                onClick={handleUpdate}
+                className="rounded-xl px-4 py-3 bg-emerald-600 text-white font-semibold shadow hover:bg-emerald-700 active:scale-[0.98] transition"
+              >
+                Save
+              </button>
             </div>
           </div>
         </div>
-        {
-          editModel && 
-          <div className="w-full flex items-center justify-center h-screen bg-gray-500/85 absolute top-0 left-0">
-            <button onClick={()=>setEditModel(false)} className="bg-red-500 text-white px-3" >X</button>
-              <div className="flex mt-4 w-[500px] rounded-md bg-white p-10">
-                
-                <input onChange={(e)=>setEditTask(e.target.value)} className="w-80 border-b-2 border-gray-500 text-black" type="text"
-                  placeholder="Update your task here"
-                />
-                <button onClick={handleUpdate} className="ml-2 border-2 border-green-500 p-2 text-green-500 hover:text-white hover:bg-green-500 rounded-lg flex"
-                >
-                  <svg
-                    className="h-6 w-6"
-                    width={24}
-                    height={24}
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    {" "}
-                    <path stroke="none" d="M0 0h24v24H0z" />{" "}
-                    <circle cx={12} cy={12} r={9} />{" "}
-                    <line x1={9} y1={12} x2={15} y2={12} />{" "}
-                    <line x1={12} y1={9} x2={12} y2={15} />
-                  </svg>
-                  <span>Update</span>
-                </button>
-              </div>
-        </div>
-        }
+      )}
 
-        
-      </>
+      <p className="text-center text-xs text-slate-500 mt-4">
+        Tip: Press <span className="font-semibold">Enter</span> to add/save.
+      </p>
     </div>
+  </div>
 
-    
+
   );
 };
 
