@@ -150,7 +150,39 @@ const App = () => {
             </div>
           </div>
         </div>
-       
+        {
+          editModel && 
+          <div className="w-full flex items-center justify-center h-screen bg-gray-500/85 absolute top-0 left-0">
+            <button onClick={()=>setEditModel(false)} className="bg-red-500 text-white px-3" >X</button>
+              <div className="flex mt-4 w-[500px] rounded-md bg-white p-10">
+                
+                <input onChange={(e)=>setEditTask(e.target.value)} className="w-80 border-b-2 border-gray-500 text-black" type="text"
+                  placeholder="Update your task here"
+                />
+                <button onClick={handleUpdate} className="ml-2 border-2 border-green-500 p-2 text-green-500 hover:text-white hover:bg-green-500 rounded-lg flex"
+                >
+                  <svg
+                    className="h-6 w-6"
+                    width={24}
+                    height={24}
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {" "}
+                    <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                    <circle cx={12} cy={12} r={9} />{" "}
+                    <line x1={9} y1={12} x2={15} y2={12} />{" "}
+                    <line x1={12} y1={9} x2={12} y2={15} />
+                  </svg>
+                  <span>Update</span>
+                </button>
+              </div>
+        </div>
+        }
 
         
       </>
